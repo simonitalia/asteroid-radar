@@ -7,21 +7,26 @@ import androidx.lifecycle.ViewModelProvider
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 
-class MainFragment : Fragment() {
+/**
+ * This fragment shows the the status of the Nasa NEO (Near-Earth-Objects) web services transaction.
+ */
 
+class MainFragment: Fragment() {
+
+    // lazily initialize viewModel
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        //Inflate layout using Data Binding
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
-
         binding.viewModel = viewModel
 
-        setHasOptionsMenu(true)
-
+        setHasOptionsMenu(true) //show options menu in action bar
         return binding.root
     }
 
