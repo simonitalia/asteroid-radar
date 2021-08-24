@@ -4,6 +4,11 @@ import android.os.Parcelable
 import com.udacity.asteroidradar.database.DatabaseAsteroid
 import kotlinx.android.parcel.Parcelize
 
+
+/**
+ * Asteroid represent an asteroid used by the app and
+ * for parsing json object fetched from API endpoint
+ */
 @Parcelize
 data class Asteroid(
     val id: Long,
