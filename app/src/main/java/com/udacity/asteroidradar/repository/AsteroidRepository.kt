@@ -20,8 +20,10 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
     // app wide accessible asteroids reference
     // transformation transforms one live data to another live data (database asteroids list object to asteroid (model) list object)
     // this transformation only runs if an activity or fragment is listening
-    val asteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidDao.getAllAsteroids()) {
-        it.asDomainModel()
+    fun getLiveData(): LiveData<List<Asteroid>> {
+            return Transformations.map(database.asteroidDao.getAllAsteroids()) {
+                it.asDomainModel()
+            }
     }
 
     //refresh database
@@ -37,11 +39,11 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
                 val jsonObject = JSONObject(response)
                 val asteroids = parseAsteroidsJsonResult(jsonObject)
 
-                Log.i("AndroidRepository", "Asteroid JSON objects fetched successfully with objects: {${asteroids.count()}}")
+                Log.i("AndroidRepository", "Asteroid JSON objects fetched successfully: {${asteroids.count()}}")
 
-                //transform Asteroids to DatabaseAsteroids and insert to database
-                val dbAsteroids = AsteroidDatabaseArrayList(asteroids)
-                database.asteroidDao.insertAll(*dbAsteroids.asDatabaseModel())
+                //transform Asteroids to DatabaseAsteroid and insert to database
+                val dbAsteroids = AsteroidDatabaseArrayList(asteroids).asDatabaseModel()
+                database.asteroidDao.insertAll(*dbAsteroids)
 
             //on error
             }  catch (e: Exception) {
