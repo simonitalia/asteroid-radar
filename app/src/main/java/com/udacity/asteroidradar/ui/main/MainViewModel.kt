@@ -31,9 +31,15 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
     //construct asteroids repository
     private val asteroidsRepository = AsteroidsRepository(database)
-    val asteroids = asteroidsRepository.getLiveData()
+    val asteroids = asteroidsRepository.getLiveData() // get data from room database as live data
+
+    val loadingStatus = asteroidsRepository.status.value
 
     init {
+        updateAsteroids() // triggers api fetch
+    }
+
+    private fun updateAsteroids() {
         viewModelScope.launch {
             asteroidsRepository.updateAsteroidsDatabase()
         }
