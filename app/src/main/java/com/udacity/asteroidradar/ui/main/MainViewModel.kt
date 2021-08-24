@@ -31,14 +31,11 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
     //construct asteroids repository
     private val asteroidsRepository = AsteroidsRepository(database)
-
-    val asteroids = asteroidsRepository.asteroids
+    val asteroids = asteroidsRepository.getLiveData()
 
     init {
         viewModelScope.launch {
             asteroidsRepository.updateAsteroidsDatabase()
-
-            Log.i("MainViewModel", "List of asteroids successfully loaded from repo: ${asteroids.value?.count()}")
         }
     }
 }
