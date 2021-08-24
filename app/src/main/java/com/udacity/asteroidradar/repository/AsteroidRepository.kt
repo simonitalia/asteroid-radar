@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.api.NeoApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
@@ -17,6 +18,13 @@ import org.json.JSONObject
 // to keep a reference to context and prevent leaks
 class AsteroidsRepository(private val database: AsteroidsDatabase) {
 
+    enum class NeoApiStatus { FETCHING, ERROR, DONE }
+
+    // live data status
+    private val _status = MutableLiveData<NeoApiStatus>()
+    val status: LiveData<NeoApiStatus>  //externally accessible property
+        get() = _status
+
     // app wide accessible asteroids reference
     // transformation transforms one live data to another live data (database asteroids list object to asteroid (model) list object)
     // this transformation only runs if an activity or fragment is listening
@@ -31,6 +39,8 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
     suspend fun updateAsteroidsDatabase() {
         withContext(kotlinx.coroutines.Dispatchers.IO) {
 
+            _status.value = NeoApiStatus.FETCHING
+
             // attempt to fetch asteroids data from api endpoint,
             // parse response,
             // and insert into database
@@ -39,14 +49,17 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
                 val jsonObject = JSONObject(response)
                 val asteroids = parseAsteroidsJsonResult(jsonObject)
 
-                Log.i("AndroidRepository", "Asteroid JSON objects fetched successfully: {${asteroids.count()}}")
-
                 //transform Asteroids to DatabaseAsteroid and insert to database
                 val dbAsteroids = AsteroidDatabaseArrayList(asteroids).asDatabaseModel()
                 database.asteroidDao.insertAll(*dbAsteroids)
 
+                _status.value = NeoApiStatus.DONE
+                Log.i("AndroidRepository", "Asteroid JSON objects fetched successfully: {${asteroids.count()}}")
+
             //on error
             }  catch (e: Exception) {
+
+                _status.value = NeoApiStatus.ERROR
                 Log.e("AndroidRepository", "Failed to fetch Asteroids Data with error: {$e}.")
             }
         }
