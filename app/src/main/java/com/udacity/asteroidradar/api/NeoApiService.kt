@@ -49,7 +49,7 @@ interface NeoApiService {
     ): String
 }
 
-// api service singleton
+// api service singleton object
 object NeoApi {
     val service: NeoApiService by lazy {
         retrofit.create(NeoApiService::class.java)
