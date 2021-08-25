@@ -1,9 +1,9 @@
 package com.udacity.asteroidradar.ui.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.database.getDatabase
+import com.udacity.asteroidradar.models.Asteroid
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 
@@ -31,17 +31,21 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
     //construct asteroids repository
     private val asteroidsRepository = AsteroidsRepository(database)
-    val asteroids = asteroidsRepository.getLiveData() // get data from room database as live data
-
-    val loadingStatus = asteroidsRepository.status.value
+    val asteroids = getLiveData()
 
     init {
-        updateAsteroids() // triggers api fetch
+        updateAsteroids()
     }
 
+    // triggers api fetch
     private fun updateAsteroids() {
         viewModelScope.launch {
             asteroidsRepository.updateAsteroidsDatabase()
         }
+    }
+
+    //gets asteroids from database as live data
+    private fun getLiveData(): LiveData<List<Asteroid>> {
+        return asteroidsRepository.getLiveData()
     }
 }
