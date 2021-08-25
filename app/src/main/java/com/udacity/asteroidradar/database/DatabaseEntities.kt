@@ -3,13 +3,14 @@ package com.udacity.asteroidradar.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.models.Asteroid
 
 /**
  * Database object representation of Asteroid model object
  */
 
-@Entity
+@Entity(tableName = Constants.NEO_TABLE)
 data class DatabaseAsteroid constructor(
 
     @PrimaryKey
