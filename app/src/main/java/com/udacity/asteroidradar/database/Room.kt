@@ -3,6 +3,7 @@ package com.udacity.asteroidradar.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.models.Asteroid
 
 
@@ -15,11 +16,11 @@ import com.udacity.asteroidradar.models.Asteroid
 interface AsteroidDao {
 
     // get list of all asteroids from cache / room database
-    @Query("select * from databaseasteroid")
-    fun getAllAsteroids(): LiveData<List<DatabaseAsteroid>>
+    @Query("SELECT * FROM near_earth_objects_table")
+   fun getAllAsteroids(): LiveData<List<DatabaseAsteroid>>
 
     // get filtered list of asteroids
-    @Query("select * from databaseasteroid WHERE is_potentially_hazardous = :isPotentiallyHazardous")
+    @Query("SELECT * FROM near_earth_objects_table WHERE is_potentially_hazardous = :isPotentiallyHazardous")
     fun getAllHazardousAsteroids(isPotentiallyHazardous: Boolean): LiveData<List<DatabaseAsteroid>>
 
     // insert method to add new asteroid/s objects into database (when fetched from API)
@@ -28,10 +29,14 @@ interface AsteroidDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg asteroids: DatabaseAsteroid)
 
+    // delete all records from table
+    @Query("DELETE FROM near_earth_objects_table")
+    fun clear()
+
 }
 
 // room database and dao interface
-@Database(entities = [DatabaseAsteroid::class], version = 1) //must set version value or app will crash
+@Database(entities = [DatabaseAsteroid::class], version = Constants.DATABASE_VERSION) //must set version value or app will crash
 abstract class AsteroidsDatabase: RoomDatabase() {
     abstract val asteroidDao: AsteroidDao
 }
