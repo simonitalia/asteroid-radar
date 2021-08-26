@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.udacity.asteroidradar.Constants
-import com.udacity.asteroidradar.models.Asteroid
 
 
 /**
