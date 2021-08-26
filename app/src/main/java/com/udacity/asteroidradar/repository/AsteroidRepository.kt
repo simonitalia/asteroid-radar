@@ -2,7 +2,6 @@ package com.udacity.asteroidradar.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.api.NeoApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
@@ -52,11 +51,11 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
                 val dbAsteroids = AsteroidDatabaseArrayList(asteroids).asDatabaseModel()
                 database.asteroidDao.insertAll(*dbAsteroids)
 
-                Log.i("AndroidRepository", "Asteroid JSON objects fetched successfully: {${asteroids.count()}}")
+                Log.i("AndroidRepository", "Asteroid Json objects successfully fetched from api: ${asteroids.count()}.")
 
             //on error
             }  catch (e: Exception) {
-                Log.e("AndroidRepository", "Failed to fetch Asteroids Data with error: {$e}.")
+                Log.e("AndroidRepository", "Failed to fetch asteroids data with error: $e.")
             }
         }
     }
