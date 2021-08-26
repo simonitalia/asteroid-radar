@@ -66,7 +66,7 @@ class MainFragment: Fragment() {
 
         //observer MainViewModel live data changes
 
-        viewModel.asteroids.observe(viewLifecycleOwner, Observer<List<Asteroid>> { asteroids ->
+        viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
             asteroids?.let {
 
                 Log.i("MainFragment.OnViewCreated", "Asteroids successfully loaded from repo: ${it.count()}.")
@@ -76,8 +76,8 @@ class MainFragment: Fragment() {
             }
         })
 
-        viewModel.pictureOfDay.observe(viewLifecycleOwner, Observer<PictureOfDay>{
-            Log.i("MainFragment", "New Picture Of Day media type: ${it.mediaType}")
+        viewModel.pictureOfDay?.observe(viewLifecycleOwner, {
+            Log.i("MainFragment", "Picture of day object fetched. Media type: ${it.mediaType}")
         })
     }
 

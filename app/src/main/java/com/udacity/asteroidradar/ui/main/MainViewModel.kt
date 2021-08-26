@@ -31,7 +31,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
     //picture of the day url
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
-    val pictureOfDay: LiveData<PictureOfDay>
+    val pictureOfDay: LiveData<PictureOfDay>?
         get() = _pictureOfDay
 
     init {
@@ -58,9 +58,10 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
             //on success
             try {
-                _pictureOfDay.value = NeoApi.service.getPictureOfDay()
+                _pictureOfDay.value = NeoApi.service.getPictureOfDay().also {
+                    Log.i("MainViewModel.getPictureOfDay", "Picture of day successfully fetched from api. Url: ${it.url}.")
+                }
                 _apiStatus.value = NeoApiStatus.DONE
-                Log.i("MainViewModel.getPictureOfDay", "Picture of day successfully fetched from api. Url: ${pictureOfDay.value?.url}.")
 
             //on error
             } catch (e: Exception) {
