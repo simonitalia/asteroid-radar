@@ -16,19 +16,6 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
 
-    /**
-     * Factory for constructing this MainViewModel with application parameter
-     */
-    class Factory(val app: Application): ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return MainViewModel(app) as T
-            }
-            throw IllegalArgumentException("Unable to construct MainViewModel")
-        }
-    }
-
     enum class NeoApiStatus { LOADING, ERROR, DONE }
 
     private val _apiStatus = MutableLiveData<NeoApiStatus>()
@@ -73,13 +60,26 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
             try {
                 _pictureOfDay.value = NeoApi.service.getPictureDay()
                 _apiStatus.value = NeoApiStatus.DONE
-                Log.i("MainViewModel.getPictureOfDay", "Picture of day successfully fetched from api: ${pictureOfDay.value?.url}.")
+                Log.i("MainViewModel.getPictureOfDay", "Picture of day successfully fetched from api. Url: ${pictureOfDay.value?.url}.")
 
             //on error
             } catch (e: Exception) {
                 _apiStatus.value = NeoApiStatus.ERROR
-                Log.i("MainViewModel.getPictureOfDay", "Failed to fetch picture of day with error: $e.")
+                Log.e("MainViewModel.getPictureOfDay", "Failed to fetch picture of day with error: $e.")
             }
+        }
+    }
+
+    /**
+     * Factory for constructing this MainViewModel with application parameter
+     */
+    class Factory(val app: Application): ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewModel")
         }
     }
 }
