@@ -5,7 +5,9 @@ import com.google.gson.GsonBuilder
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.models.PictureOfDay
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -31,6 +33,7 @@ val retrofit: Retrofit by lazy {
     Retrofit.Builder()
         .baseUrl(Constants.BASE_URL)
         .addConverterFactory(ScalarsConverterFactory.create())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 }
 
@@ -42,11 +45,17 @@ interface NeoApiService {
 
     // Get requests
 
-    // fetch all available data frm endpoint (last 7 days)
+    // fetch asteroids data from endpoint
     @GET("neo/rest/v1/feed?")  // param = api endpoint
     suspend fun getAsteroidsData(
         @Query("api_key") api_key: String = Constants.API_KEY
     ): String
+
+    //fetch picture of the day
+    @GET("planetary/apod?")
+    suspend fun getPictureDay(
+        @Query("api_key") api_key: String = Constants.API_KEY
+    ): PictureOfDay
 }
 
 // api service singleton object
