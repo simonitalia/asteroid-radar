@@ -6,7 +6,9 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.bindAsteroidStatusImage
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.models.Asteroid
 import kotlinx.android.synthetic.main.asteroid_item.view.*
@@ -16,6 +18,8 @@ import kotlinx.android.synthetic.main.asteroid_item.view.*
  */
 
 class MainFragment: Fragment() {
+
+    private lateinit var binding: FragmentMainBinding
 
     // lazily initialize MainViewModel using .Factory to pass in application parameter
     private val viewModel: MainViewModel by lazy {
@@ -29,7 +33,7 @@ class MainFragment: Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         //Inflate layout using Data Binding, and bind fragment with this ui controller
-        val binding = FragmentMainBinding.inflate(inflater)
+        binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         binding.asteroidRecycler.adapter = adapter
@@ -47,14 +51,23 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //monitor changes to MainViewModel live data
+        //observer MainViewModel live data changes
+
         viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
             asteroids?.let {
 
-                Log.i("MainFragment", "Asteroids successfully loaded from repo: ${it.count()}")
+                Log.i("MainFragment.OnViewCreated", "Asteroids successfully loaded from repo: ${it.count()}.")
 
                 //update recycler adapter with new asteroid items
                 adapter?.asteroidItems = it
+            }
+        })
+
+        viewModel.pictureOfDay.observe(viewLifecycleOwner, {
+            when (it?.mediaType == "") {
+                true -> Picasso.with(view.context).load(it.url)
+                    .into(binding.activityMainImageOfTheDay)
+                false -> binding.activityMainImageOfTheDay.setImageResource(R.drawable.placeholder_picture_of_day)
             }
         })
     }
@@ -117,11 +130,7 @@ class AsteroidRecyclerAdapter: RecyclerView.Adapter<AsteroidRecyclerAdapter.Aste
             this.asteroid = asteroid
             itemView.code_name.text = asteroid.codename
             itemView.close_approach_date.text = asteroid.closeApproachDate
-
-            itemView.status_image.setImageResource(when (asteroid.isPotentiallyHazardous) {
-                true -> R.drawable.ic_status_potentially_hazardous
-                false -> R.drawable.ic_status_normal
-            })
+            bindAsteroidStatusImage(itemView.status_image, asteroid.isPotentiallyHazardous)
         }
 
         override fun onClick(v: View?) {
