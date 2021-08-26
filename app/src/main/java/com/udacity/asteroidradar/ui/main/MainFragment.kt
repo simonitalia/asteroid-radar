@@ -66,7 +66,9 @@ class MainFragment: Fragment() {
 
         viewModel.pictureOfDay.observe(viewLifecycleOwner, {
             it?.let {
-                when (Constants.MediaType.valueOf(it.mediaType)) {
+
+                val mediaType = Constants.MediaType.valueOf(it.mediaType)
+                when (mediaType) {
                     Constants.MediaType.IMAGE -> Picasso.with(view.context).load(it.url)
                         .into(binding.activityMainImageOfTheDay)
                     else -> binding.activityMainImageOfTheDay.setImageResource(R.drawable.ic_broken_image)
