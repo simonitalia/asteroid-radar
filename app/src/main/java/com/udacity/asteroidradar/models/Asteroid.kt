@@ -6,8 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 
 /**
- * Asteroid represent an asteroid used by the app and
- * for parsing json object fetched from API endpoint
+ * Asteroid represent an asteroid used by the app
  */
 @Parcelize
 data class Asteroid(
