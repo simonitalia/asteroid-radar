@@ -5,6 +5,8 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.udacity.asteroidradar.models.PictureOfDay
 import com.udacity.asteroidradar.ui.main.MainViewModel
 
 @BindingAdapter("statusIcon")
@@ -45,13 +47,21 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 
 @BindingAdapter("neoApiStatus")
 fun bindStatus(progressBarView: ProgressBar, apiStatus: MainViewModel.NeoApiStatus) {
+    progressBarView.visibility = if (apiStatus == MainViewModel.NeoApiStatus.LOADING) View.VISIBLE else View.GONE
+}
 
-    when (apiStatus) {
-        MainViewModel.NeoApiStatus.LOADING -> { // only displayed if connection to api is established
-            progressBarView.visibility = View.VISIBLE
-        }
-        else -> {
-            progressBarView.visibility = View.GONE
-        }
+@BindingAdapter("pictureOfDayImage")
+fun bindPictureOfDayImage(imageView: ImageView, pictureOfDay: PictureOfDay) {
+
+    when (pictureOfDay.mediaType == "image") {
+        true ->  Glide.with(imageView.context).load(pictureOfDay.url).into(imageView)
+
+        // when any other media
+        false -> imageView.setImageResource(R.drawable.ic_broken_image)
     }
+}
+
+@BindingAdapter("bindText")
+fun bindTextView(textView: TextView, text: String) {
+    textView.text = text
 }
