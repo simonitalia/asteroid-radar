@@ -1,9 +1,12 @@
 package com.udacity.asteroidradar.ui.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
+import com.udacity.asteroidradar.api.NeoApi
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.models.Asteroid
+import com.udacity.asteroidradar.models.PictureOfDay
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import kotlinx.coroutines.launch
 
@@ -26,6 +29,12 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    enum class NeoApiStatus { LOADING, ERROR, DONE }
+
+    private val _apiStatus = MutableLiveData<NeoApiStatus>()
+    val apiStatus: LiveData<NeoApiStatus>
+        get() = _apiStatus
+
     //access database singleton
     private val database = getDatabase(application)
 
@@ -33,8 +42,14 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     private val asteroidsRepository = AsteroidsRepository(database)
     val asteroids = getLiveData()
 
+    //picture of the day url
+    private val _pictureOfDay = MutableLiveData<PictureOfDay>()
+    val pictureOfDay: LiveData<PictureOfDay>
+        get() = _pictureOfDay
+
     init {
         updateAsteroids()
+        getPictureOfDay()
     }
 
     // triggers api fetch
@@ -47,5 +62,24 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     //gets asteroids from database as live data
     private fun getLiveData(): LiveData<List<Asteroid>> {
         return asteroidsRepository.getLiveData()
+    }
+
+    //get picture of day from api endpoint
+    private fun getPictureOfDay() {
+        viewModelScope.launch {
+            _apiStatus.value = NeoApiStatus.LOADING
+
+            //on success
+            try {
+                _pictureOfDay.value = NeoApi.service.getPictureDay()
+                _apiStatus.value = NeoApiStatus.DONE
+                Log.i("MainViewModel.getPictureOfDay", "Picture of day successfully fetched from api: ${pictureOfDay.value?.url}.")
+
+            //on error
+            } catch (e: Exception) {
+                _apiStatus.value = NeoApiStatus.ERROR
+                Log.i("MainViewModel.getPictureOfDay", "Failed to fetch picture of day with error: $e.")
+            }
+        }
     }
 }
