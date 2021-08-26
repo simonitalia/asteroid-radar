@@ -1,8 +1,11 @@
 package com.udacity.asteroidradar
 
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.udacity.asteroidradar.ui.main.MainViewModel
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -38,4 +41,17 @@ fun bindTextViewToKmUnit(textView: TextView, number: Double) {
 fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     val context = textView.context
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
+}
+
+@BindingAdapter("neoApiStatus")
+fun bindStatus(progressBarView: ProgressBar, apiStatus: MainViewModel.NeoApiStatus) {
+
+    when (apiStatus) {
+        MainViewModel.NeoApiStatus.LOADING -> { // only displayed if connection to api is established
+            progressBarView.visibility = View.VISIBLE
+        }
+        else -> {
+            progressBarView.visibility = View.GONE
+        }
+    }
 }
