@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.bindAsteroidStatusImage
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
@@ -64,10 +65,14 @@ class MainFragment: Fragment() {
         })
 
         viewModel.pictureOfDay.observe(viewLifecycleOwner, {
-            when (it?.mediaType == "") {
-                true -> Picasso.with(view.context).load(it.url)
-                    .into(binding.activityMainImageOfTheDay)
-                false -> binding.activityMainImageOfTheDay.setImageResource(R.drawable.placeholder_picture_of_day)
+            it?.let {
+                when (Constants.MediaType.valueOf(it.mediaType)) {
+                    Constants.MediaType.IMAGE -> Picasso.with(view.context).load(it.url)
+                        .into(binding.activityMainImageOfTheDay)
+                    else -> binding.activityMainImageOfTheDay.setImageResource(R.drawable.ic_broken_image)
+                }
+            }.run {
+                binding.activityMainImageOfTheDay.setImageResource(R.drawable.ic_connection_error)
             }
         })
     }
