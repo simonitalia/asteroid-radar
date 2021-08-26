@@ -4,36 +4,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <data>
+        <variable
+            name="asteroid"
+            type="com.udacity.asteroidradar.models.Asteroid" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/app_background">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_8dp"
             android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_16dp"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="16dp">
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp">
 
             <LinearLayout
                 android:id="@+id/text_views_container"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/code_name"
+                    style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_8dp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
                     tools:text="TextView" />
 
                 <TextView
                     android:id="@+id/close_approach_date"
+                    style="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="#80FFFFFF"
+                    android:textStyle="bold"
                     tools:text="TextView" />
             </LinearLayout>
 
@@ -41,8 +55,9 @@
                 android:id="@+id/status_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginStart="@dimen/margin_8dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/status_image_description"
                 tools:srcCompat="@drawable/ic_status_normal" />
 
         </LinearLayout>
