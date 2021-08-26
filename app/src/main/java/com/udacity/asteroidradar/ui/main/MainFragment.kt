@@ -1,12 +1,9 @@
 package com.udacity.asteroidradar.ui.main
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.R
@@ -26,13 +23,12 @@ class MainFragment: Fragment() {
     }
 
     // recycler adapter to convert asteroid items to ui
-    private val adapter = RecyclerAdapter()
-
+    private val adapter = AsteroidRecyclerAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        //Inflate layout using Data Binding
+        //Inflate layout using Data Binding, and bind fragment with this ui controller
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -52,16 +48,15 @@ class MainFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //monitor changes to MainViewModel live data
-        viewModel.asteroids.observe(viewLifecycleOwner, Observer<List<Asteroid>> { asteroids ->
-            asteroids?.apply {
+        viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
+            asteroids?.let {
 
-                Log.i("MainFragment", "Asteroids successfully loaded from repo: ${asteroids.count()}")
+                Log.i("MainFragment", "Asteroids successfully loaded from repo: ${it.count()}")
 
-                //update recylcer adapter with new asteroid items
-                adapter?.asteroidItems = asteroids
+                //update recycler adapter with new asteroid items
+                adapter?.asteroidItems = it
             }
         })
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,7 +72,7 @@ class MainFragment: Fragment() {
 /**
  * RecyclerView Adapter for setting up data binding on the items in the list.
  */
-class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.AsteroidHolder>() {
+class AsteroidRecyclerAdapter: RecyclerView.Adapter<AsteroidRecyclerAdapter.AsteroidItemViewHolder>() {
 
     // list data
     var asteroidItems = listOf<Asteroid>()
@@ -86,18 +81,19 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.AsteroidHolder>() {
             notifyDataSetChanged()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidItemViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
         //inflate layout xml (passing in filename of xml)
-        val inflatedView = layoutInflater
+        val asteroidItemView = layoutInflater
             .inflate(R.layout.asteroid_item, parent, false)
-        return AsteroidHolder(inflatedView)
+        return AsteroidItemViewHolder(asteroidItemView)
     }
 
-    override fun onBindViewHolder(holder: AsteroidHolder, position: Int) {
-        val asteroidItem = asteroidItems[position]
-        holder.bindAsteroid(asteroidItem)
+    // bridge between asteroid data item and asteroid item view (ui layout)
+    override fun onBindViewHolder(holder: AsteroidItemViewHolder, position: Int) {
+        val asteroid = asteroidItems[position]
+        holder.bindItem(asteroid)
     }
 
     override fun getItemCount(): Int {
@@ -107,7 +103,7 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.AsteroidHolder>() {
     /**
      * Bridge between Adapter class and xml ui Views
      */
-    class AsteroidHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class AsteroidItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         // item reference
         private var asteroid: Asteroid? = null
@@ -117,27 +113,15 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerAdapter.AsteroidHolder>() {
         }
 
         // bind asteroid item property values with ui views
-        fun bindAsteroid(asteroid: Asteroid) {
+        fun bindItem(asteroid: Asteroid) {
             this.asteroid = asteroid
             itemView.code_name.text = asteroid.codename
             itemView.close_approach_date.text = asteroid.closeApproachDate
 
-            var statusImage: Drawable? = when (asteroid.isPotentiallyHazardous) {
-
-                true -> {
-                    itemView.context?.resources?.let {
-                        ResourcesCompat.getDrawable(it, R.drawable.ic_status_potentially_hazardous, null)
-                    }
-                }
-
-                false -> {
-                    itemView.context?.resources?.let {
-                        ResourcesCompat.getDrawable(it, R.drawable.ic_status_normal, null)
-                    }
-                }
-            }
-
-            itemView.status_image.setImageDrawable(statusImage)
+            itemView.status_image.setImageResource(when (asteroid.isPotentiallyHazardous) {
+                true -> R.drawable.ic_status_potentially_hazardous
+                false -> R.drawable.ic_status_normal
+            })
         }
 
         override fun onClick(v: View?) {
