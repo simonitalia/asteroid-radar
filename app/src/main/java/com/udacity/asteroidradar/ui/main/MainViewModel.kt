@@ -58,7 +58,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
             //on success
             try {
-                _pictureOfDay.value = NeoApi.service.getPictureDay()
+                _pictureOfDay.value = NeoApi.service.getPictureOfDay()
                 _apiStatus.value = NeoApiStatus.DONE
                 Log.i("MainViewModel.getPictureOfDay", "Picture of day successfully fetched from api. Url: ${pictureOfDay.value?.url}.")
 

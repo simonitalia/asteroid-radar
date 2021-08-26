@@ -51,13 +51,14 @@ fun bindStatus(progressBarView: ProgressBar, apiStatus: MainViewModel.NeoApiStat
 }
 
 @BindingAdapter("pictureOfDayImage")
-fun bindPictureOfDayImage(imageView: ImageView, pictureOfDay: PictureOfDay) {
+fun bindPictureOfDayImage(imageView: ImageView, pictureOfDay: PictureOfDay?) {
 
-    when (pictureOfDay.mediaType == "image") {
-        true ->  Glide.with(imageView.context).load(pictureOfDay.url).into(imageView)
+    pictureOfDay?.let {
+        if (it.mediaType == "image") Glide.with(imageView.context).load(pictureOfDay.url)
+            .into(imageView)
 
-        // when any other media
-        false -> imageView.setImageResource(R.drawable.ic_broken_image)
+    }.run {
+        imageView.setImageResource(R.drawable.ic_connection_error)
     }
 }
 

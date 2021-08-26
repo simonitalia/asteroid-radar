@@ -53,7 +53,7 @@ interface NeoApiService {
 
     //fetch picture of the day
     @GET("planetary/apod?")
-    suspend fun getPictureDay(
+    suspend fun getPictureOfDay(
         @Query("api_key") api_key: String = Constants.API_KEY
     ): PictureOfDay
 }
