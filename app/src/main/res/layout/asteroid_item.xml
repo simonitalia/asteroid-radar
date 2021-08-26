@@ -38,6 +38,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
+                    app:bindText="@{asteroid.codename}"
                     tools:text="TextView" />
 
                 <TextView
@@ -48,6 +49,7 @@
                     android:layout_marginBottom="8dp"
                     android:textColor="#80FFFFFF"
                     android:textStyle="bold"
+                    app:bindText="@{asteroid.closeApproachDate}"
                     tools:text="TextView" />
             </LinearLayout>
 
@@ -58,6 +60,7 @@
                 android:layout_marginStart="@dimen/margin_8dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/status_image_description"
+                app:statusIcon="@{asteroid.potentiallyHazardous}"
                 tools:srcCompat="@drawable/ic_status_normal" />
 
         </LinearLayout>
