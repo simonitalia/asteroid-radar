@@ -14,7 +14,22 @@ import kotlinx.coroutines.launch
  * Attach this [ViewModel] to [MainFragment].
  */
 
-class MainViewModel(application: Application): AndroidViewModel(application) {
+class MainViewModel(
+    application: Application
+): AndroidViewModel(application) {
+
+    /**
+     * Factory for constructing this MainViewModel with application parameter
+     */
+    class Factory(val app: Application): ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewModel")
+        }
+    }
 
     enum class NeoApiStatus { LOADING, ERROR, DONE }
 
@@ -34,9 +49,10 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     val pictureOfDay: LiveData<PictureOfDay>?
         get() = _pictureOfDay
 
-    // navigation
-
-
+    // asteroid tapped by user
+    private val _selectedAsteroid = MutableLiveData<Asteroid>()
+    val selectedAsteroid: LiveData<Asteroid>
+        get() = _selectedAsteroid
 
     init {
         updateAsteroids()
@@ -75,16 +91,14 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    /**
-     * Factory for constructing this MainViewModel with application parameter
-     */
-    class Factory(val app: Application): ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return MainViewModel(app) as T
-            }
-            throw IllegalArgumentException("Unable to construct viewModel")
-        }
+    // navigation
+
+    // called when selectedAsteroid is set
+    fun displayDetailFragment(asteroid: Asteroid) {
+        _selectedAsteroid.value = asteroid
+    }
+
+    fun displayDetailFragmentCompleted() {
+        _selectedAsteroid.value = null
     }
 }
