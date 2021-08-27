@@ -7,6 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.AsteroidItemBinding
@@ -17,7 +18,7 @@ import com.udacity.asteroidradar.models.Asteroid
  * This fragment shows asteroids from fetched from Nasa NEO (Near-Earth-Objects) web service.
  */
 
-class MainFragment: Fragment() {
+class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // implement adapter listener
 
     // lazily initialize MainViewModel using .Factory to pass in application parameter
     private val viewModel: MainViewModel by lazy {
@@ -29,7 +30,8 @@ class MainFragment: Fragment() {
     }
 
     // recycler adapter to display asteroid items data in ui
-    private val adapter = AsteroidRecyclerViewAdapter()
+    private lateinit var listener: AsteroidRecyclerViewAdapterListener
+    private lateinit var adapter: AsteroidRecyclerViewAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,6 +44,9 @@ class MainFragment: Fragment() {
             container,
             false
         )
+
+        listener = this
+        adapter = AsteroidRecyclerViewAdapter(listener)
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -77,6 +82,14 @@ class MainFragment: Fragment() {
         viewModel.pictureOfDay?.observe(viewLifecycleOwner, {
             Log.i("MainFragment", "Picture of day object fetched. Media type: ${it.mediaType}")
         })
+
+        //observe the navigation property value to trigger navigation (on tap of selected asteroid)
+        viewModel.selectedAsteroid.observe(viewLifecycleOwner, { selectedAsteroid ->
+            selectedAsteroid?.let {
+                this.findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
+                viewModel.showDetailFragmentComplete() //reset value to null
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -87,12 +100,24 @@ class MainFragment: Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return true
     }
+
+    // adapter interface method implementation
+    override fun onItemViewPressed(asteroid: Asteroid) {
+        viewModel.showDetailFragment(asteroid)
+    }
 }
 
 /**
  * RecyclerView Adapter for setting up data binding on the items in the list.
+ * Interface for communication between adapter and fragment classes
  */
-class AsteroidRecyclerViewAdapter: RecyclerView.Adapter<AsteroidItemViewHolder>() {
+interface AsteroidRecyclerViewAdapterListener {
+    fun onItemViewPressed(asteroid: Asteroid)
+}
+
+class AsteroidRecyclerViewAdapter(
+    private val listener: AsteroidRecyclerViewAdapterListener
+): RecyclerView.Adapter<AsteroidItemViewHolder>() {
 
     // list data
     var asteroidItems: List<Asteroid> = emptyList()
@@ -113,8 +138,16 @@ class AsteroidRecyclerViewAdapter: RecyclerView.Adapter<AsteroidItemViewHolder>(
 
     // bridge between asteroid data item and asteroid item view (ui layout)
     override fun onBindViewHolder(holder: AsteroidItemViewHolder, position: Int) {
+
+        val asteroidItem = asteroidItems[position]
         holder.viewDataBinding.also {
-            it.asteroid = asteroidItems[position] // connects to layout item data variable
+            it.asteroid = asteroidItem // connects to layout item data variable
+
+        }
+
+        // pass asteroid item pressed back to listener
+        holder.itemView.setOnClickListener {
+            listener.onItemViewPressed(asteroidItem)
         }
     }
 
