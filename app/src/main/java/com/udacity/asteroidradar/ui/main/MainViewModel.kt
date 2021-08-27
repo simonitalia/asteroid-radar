@@ -93,12 +93,12 @@ class MainViewModel(
 
     // navigation
 
-    // called when selectedAsteroid is set
-    fun displayDetailFragment(asteroid: Asteroid) {
+    // call to set selectedAsteroid to trigger navigation
+    fun showDetailFragment(asteroid: Asteroid) {
         _selectedAsteroid.value = asteroid
     }
 
-    fun displayDetailFragmentCompleted() {
+    fun showDetailFragmentComplete() {
         _selectedAsteroid.value = null
     }
 }
