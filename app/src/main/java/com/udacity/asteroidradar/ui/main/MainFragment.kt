@@ -6,14 +6,12 @@ import android.view.*
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.AsteroidItemBinding
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.models.Asteroid
-import com.udacity.asteroidradar.models.PictureOfDay
 
 /**
  * This fragment shows asteroids from fetched from Nasa NEO (Near-Earth-Objects) web service.
@@ -45,7 +43,7 @@ class MainFragment: Fragment() {
             false
         )
 
-        binding.setLifecycleOwner(viewLifecycleOwner)
+        binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
         //adapter binding
