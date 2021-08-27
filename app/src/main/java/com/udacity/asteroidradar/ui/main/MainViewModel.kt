@@ -22,17 +22,21 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     val apiStatus: LiveData<NeoApiStatus>
         get() = _apiStatus
 
-    //access database singleton
+    // access database singleton
     private val database = getDatabase(application)
 
-    //construct asteroids repository
+    // construct asteroids repository
     private val asteroidsRepository = AsteroidsRepository(database)
     val asteroids = getLiveData()
 
-    //picture of the day url
+    // picture of the day url
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay: LiveData<PictureOfDay>?
         get() = _pictureOfDay
+
+    // navigation
+
+
 
     init {
         updateAsteroids()
@@ -46,12 +50,12 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    //gets asteroids from database as live data
+    // gets asteroids from database as live data
     private fun getLiveData(): LiveData<List<Asteroid>> {
         return asteroidsRepository.getLiveData()
     }
 
-    //get picture of day from api endpoint
+    // get picture of day from api endpoint
     private fun getPictureOfDay() {
         viewModelScope.launch {
             _apiStatus.value = NeoApiStatus.LOADING

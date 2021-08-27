@@ -30,13 +30,13 @@ class MainFragment: Fragment() {
         ViewModelProvider(this, MainViewModel.Factory(activity.application)).get(MainViewModel::class.java)
     }
 
-    // recycler adapter to convert asteroid items to ui
+    // recycler adapter to display asteroid items data in ui
     private val adapter = AsteroidRecyclerViewAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        //Inflate layout using Data Binding, and bind fragment with this ui controller
+        // inflate layout using Data Binding, and bind fragment with this ui controller
 
         val binding: FragmentMainBinding =  DataBindingUtil.inflate(
             inflater,
@@ -64,7 +64,7 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //observer MainViewModel live data changes
+        // observer MainViewModel live data changes
 
         viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
             asteroids?.let {
