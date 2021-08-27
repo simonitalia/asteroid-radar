@@ -9,14 +9,18 @@ import com.bumptech.glide.Glide
 import com.udacity.asteroidradar.models.PictureOfDay
 import com.udacity.asteroidradar.ui.main.MainViewModel
 
-@BindingAdapter("statusIcon")
-fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
-    if (isHazardous) {
-        imageView.setImageResource(R.drawable.ic_status_potentially_hazardous)
-    } else {
-        imageView.setImageResource(R.drawable.ic_status_normal)
-    }
+/**
+ * General purpose bindings.
+ */
+
+@BindingAdapter("bindText")
+fun bindTextView(textView: TextView, text: String) {
+    textView.text = text
 }
+
+/**
+ * fragment_detail bindings
+ */
 
 @BindingAdapter("asteroidStatusImage")
 fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -45,6 +49,20 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
 }
 
+
+/**
+ * fragment_main bindings .
+ */
+
+@BindingAdapter("statusIcon")
+fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
+    if (isHazardous) {
+        imageView.setImageResource(R.drawable.ic_status_potentially_hazardous)
+    } else {
+        imageView.setImageResource(R.drawable.ic_status_normal)
+    }
+}
+
 @BindingAdapter("neoApiStatus")
 fun bindStatus(progressBarView: ProgressBar, apiStatus: MainViewModel.NeoApiStatus) {
     progressBarView.visibility = if (apiStatus == MainViewModel.NeoApiStatus.LOADING) View.VISIBLE else View.GONE
@@ -60,9 +78,4 @@ fun bindPictureOfDayImage(imageView: ImageView, pictureOfDay: PictureOfDay?) {
     }.run {
         imageView.setImageResource(R.drawable.ic_connection_error)
     }
-}
-
-@BindingAdapter("bindText")
-fun bindTextView(textView: TextView, text: String) {
-    textView.text = text
 }
