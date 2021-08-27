@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
-            name="asteroid"
-            type="com.udacity.asteroidradar.models.Asteroid" />
+            name="viewModel"
+            type="com.udacity.asteroidradar.ui.detail.DetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,11 +16,11 @@
         android:background="@color/app_background">
 
         <ImageView
-            android:id="@+id/activity_main_image_of_the_day"
+            android:id="@+id/hazardous_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            app:asteroidStatusImage="@{asteroid.potentiallyHazardous}"
+            app:asteroidStatusImage="@{viewModel.selectedAsteroid.potentiallyHazardous}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,7 +32,7 @@
             android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_main_image_of_the_day">
+            app:layout_constraintTop_toBottomOf="@+id/hazardous_image">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="@{asteroid.closeApproachDate}"
+                        android:text="@{viewModel.selectedAsteroid.closeApproachDate}"
                         android:textColor="@color/default_text_color"
                         tools:text="2020-02-01" />
                 </LinearLayout>
@@ -85,7 +85,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:textColor="@color/default_text_color"
-                            app:astronomicalUnitText="@{asteroid.absoluteMagnitude}"
+                            app:astronomicalUnitText="@{viewModel.selectedAsteroid.absoluteMagnitude}"
                             tools:text="25.126 au" />
                     </LinearLayout>
 
@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/default_text_color"
-                    app:kmUnitText="@{asteroid.estimatedDiameter}"
+                    app:kmUnitText="@{viewModel.selectedAsteroid.estimatedDiameter}"
                     tools:text="0.82 km" />
 
                 <TextView
@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/default_text_color"
-                    app:velocityText="@{asteroid.relativeVelocity}"
+                    app:velocityText="@{viewModel.selectedAsteroid.relativeVelocity}"
                     tools:text="11.9 km/s" />
 
                 <TextView
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/default_text_color"
-                    app:astronomicalUnitText="@{asteroid.distanceFromEarth}"
+                    app:astronomicalUnitText="@{viewModel.selectedAsteroid.distanceFromEarth}"
                     tools:text="0.0924 au" />
 
             </LinearLayout>
