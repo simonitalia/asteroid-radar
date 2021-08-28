@@ -7,6 +7,7 @@ buildscript {
         version_timber = "4.7.1"
         version_glide = "4.8.0"
         version_gradle = '7.0.1'
+        version_room = "2.2.5"
     }
 
     repositories {

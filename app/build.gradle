@@ -64,8 +64,10 @@ dependencies {
 
     implementation "androidx.recyclerview:recyclerview:1.1.0"
 
-    implementation "androidx.room:room-runtime:2.2.5"
-    kapt "androidx.room:room-compiler:2.2.5"
+    //room
+    implementation "androidx.room:room-runtime:$version_room"
+    implementation "androidx.room:room-ktx:$version_room"
+    kapt "androidx.room:room-compiler:$version_room"
 
     // WorkManager
     implementation "android.arch.work:work-runtime-ktx:1.0.1"
