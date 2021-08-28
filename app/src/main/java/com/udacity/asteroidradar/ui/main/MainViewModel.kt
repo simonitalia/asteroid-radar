@@ -66,9 +66,9 @@ class MainViewModel(
         }
     }
 
-    // gets asteroids from database as live data
-    private fun getLiveData(): LiveData<List<Asteroid>> {
-        return asteroidsRepository.getLiveData()
+    // gets asteroids from database as live data (default filter == SHOW_ALL)
+    private fun getLiveData(filter: AsteroidsRepository.AsteroidsFilter = AsteroidsRepository.AsteroidsFilter.SHOW_ALL): LiveData<List<Asteroid>> {
+        return asteroidsRepository.getLiveData(filter)
     }
 
     // get picture of day from api endpoint
@@ -99,6 +99,6 @@ class MainViewModel(
     }
 
     fun showDetailFragmentComplete() {
-        _selectedAsteroid.value = null
+        _selectedAsteroid.value = null // prevent subsequent navigation
     }
 }
