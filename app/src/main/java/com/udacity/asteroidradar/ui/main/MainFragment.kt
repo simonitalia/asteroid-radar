@@ -8,11 +8,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.AsteroidItemBinding
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.models.Asteroid
+import com.udacity.asteroidradar.repository.AsteroidsRepository
 
 /**
  * This fragment shows asteroids from fetched from Nasa NEO (Near-Earth-Objects) web service.
@@ -31,7 +34,7 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
 
     // recycler adapter to display asteroid items data in ui
     private lateinit var listener: AsteroidRecyclerViewAdapterListener
-    private lateinit var adapter: AsteroidRecyclerViewAdapter
+    private lateinit var adapter: AsteroidAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,7 +49,7 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
         )
 
         listener = this
-        adapter = AsteroidRecyclerViewAdapter(listener)
+        adapter = AsteroidAdapter(listener)
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -69,13 +72,11 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
 
         // observer MainViewModel live data changes
 
-        viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
+        viewModel.asteroids?.observe(viewLifecycleOwner, { asteroids ->
             asteroids?.let {
 
                 Log.i("MainFragment.OnViewCreated", "Asteroids successfully loaded from repo: ${it.count()}.")
-
-                //update recycler adapter with new asteroid items
-                adapter.asteroidItems = it
+                adapter.submitList(it)
             }
         })
 
@@ -115,55 +116,54 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
 interface AsteroidRecyclerViewAdapterListener {
     fun onItemViewPressed(asteroid: Asteroid)
 }
-
-class AsteroidRecyclerViewAdapter(
+class AsteroidAdapter(
     private val listener: AsteroidRecyclerViewAdapterListener
-): RecyclerView.Adapter<AsteroidItemViewHolder>() {
+): ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(AdapterDiffCallback()) {
 
-    // list data
-    var asteroidItems: List<Asteroid> = emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
+    /**
+     * Diff Util for managing Data changes
+     */
+    class AdapterDiffCallback: DiffUtil.ItemCallback<Asteroid>() {
+        override fun areItemsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
+            return oldItem.id == newItem.id
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidItemViewHolder {
+        override fun areContentsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
+            return oldItem.id == newItem.id
+        }
+    }
+
+    /**
+     * Bridge between Adapter class and xml ui Views
+     * Setting Views with data handled by BindingAdapters
+     */
+    class ViewHolder(val viewDataBinding: AsteroidItemBinding): RecyclerView.ViewHolder(viewDataBinding.root) {
+        companion object {
+            @LayoutRes
+            val LAYOUT = R.layout.asteroid_item
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val withDataBinding: AsteroidItemBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            AsteroidItemViewHolder.LAYOUT,
+            ViewHolder.LAYOUT,
             parent,
             false)
-        return AsteroidItemViewHolder(withDataBinding)
+        return ViewHolder(withDataBinding)
     }
 
     // bridge between asteroid data item and asteroid item view (ui layout)
-    override fun onBindViewHolder(holder: AsteroidItemViewHolder, position: Int) {
-
-        val asteroidItem = asteroidItems[position]
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val asteroidItem = getItem(position)
         holder.viewDataBinding.also {
             it.asteroid = asteroidItem // connects to layout item data variable
-
         }
 
         // pass asteroid item pressed back to listener
         holder.itemView.setOnClickListener {
             listener.onItemViewPressed(asteroidItem)
         }
-    }
-
-    override fun getItemCount(): Int {
-        return asteroidItems.size
-    }
-}
-
-/**
- * Bridge between Adapter class and xml ui Views
- * Setting Views with data handled by BindingAdapters
- */
-class AsteroidItemViewHolder(val viewDataBinding: AsteroidItemBinding): RecyclerView.ViewHolder(viewDataBinding.root) {
-    companion object {
-        @LayoutRes
-        val LAYOUT = R.layout.asteroid_item
     }
 }
