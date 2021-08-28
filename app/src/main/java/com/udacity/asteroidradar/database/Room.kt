@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.database
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.udacity.asteroidradar.Constants
 
@@ -16,12 +17,12 @@ interface AsteroidDao {
 
     // get list of all asteroids from cache / room database
     @Query("SELECT * FROM near_earth_objects_table")
-   fun getAllAsteroids(): LiveData<List<DatabaseAsteroid>>
+    fun getAllAsteroids(): List<DatabaseAsteroid>
 
     // get filtered list of asteroids
 
     @Query("SELECT * FROM near_earth_objects_table WHERE close_approach_date >= :periodStart AND close_approach_date <= :periodEnd")
-    fun getAsteroidsForPeriod(periodStart: String, periodEnd: String): LiveData<List<DatabaseAsteroid>>
+    fun getAsteroidsForPeriod(periodStart: String, periodEnd: String): List<DatabaseAsteroid>
 
     @Query("SELECT * FROM near_earth_objects_table WHERE is_potentially_hazardous = :isPotentiallyHazardous")
     fun getAllHazardousAsteroids(isPotentiallyHazardous: Boolean): LiveData<List<DatabaseAsteroid>>

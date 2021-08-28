@@ -1,8 +1,6 @@
 package com.udacity.asteroidradar.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.api.NeoApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidsDatabase
@@ -11,12 +9,12 @@ import com.udacity.asteroidradar.models.Asteroid
 import com.udacity.asteroidradar.models.AsteroidDatabaseArrayList
 import com.udacity.asteroidradar.models.asDatabaseModel
 import com.udacity.asteroidradar.utilities.DateUtilities
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 // uses dependency injection to get reference to database from ViewModel instance to negate need
 // to keep a reference to context and prevent leaks
-
 
 class AsteroidsRepository(private val database: AsteroidsDatabase) {
 
@@ -27,45 +25,53 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
     // app wide accessible asteroids reference
     // transformation transforms one live data to another live data (database asteroids list object to asteroid (model) list object)
     // this transformation only runs if an activity or fragment is listening
-    fun getLiveData(filter: AsteroidsFilter): LiveData<List<Asteroid>> {
+    suspend fun getLiveData(filter: AsteroidsFilter): List<Asteroid> {
 
-        // show all
-        if (filter == AsteroidsFilter.SHOW_ALL) {
-            return Transformations.map(database.asteroidDao.getAllAsteroids()) {
-                it.asDomainModel()
-            }
+        var list: List<Asteroid>
 
-        } else {
+        withContext(Dispatchers.IO) {
 
-            var startDate = ""
-            var endDate = ""
+            // show all
+            if (filter == AsteroidsFilter.SHOW_ALL) {
+                list = database.asteroidDao.getAllAsteroids().asDomainModel()
 
-            when (filter) {
+            } else {
 
-                // show last 7 days
-                AsteroidsFilter.SHOW_PAST_WEEK -> {
-                    startDate = DateUtilities.getPastSevenDaysFormattedDates().last()
-                    endDate = DateUtilities.getPastSevenDaysFormattedDates().first()
+                var startDate = ""
+                var endDate = ""
+
+                when (filter) {
+
+                    // show last 7 days
+                    AsteroidsFilter.SHOW_PAST_WEEK -> {
+                        startDate = DateUtilities.getPastSevenDaysFormattedDates().last()
+                        endDate = DateUtilities.getPastSevenDaysFormattedDates().first()
+                    }
+
+                    // show today
+                    else -> {
+                        startDate = DateUtilities.getTodayFormattedDates().first()
+                        endDate = DateUtilities.getTodayFormattedDates().last()
+                    }
                 }
 
-                // show today
-                else -> {
-                    startDate = DateUtilities.getTodayFormattedDates().first()
-                    endDate = DateUtilities.getTodayFormattedDates().last()
-                }
-            }
+                Log.i(
+                    "AndroidRepository.getLiveData",
+                    "Fetching asteroid objects from database for period: $startDate to $endDate."
+                )
 
-            Log.i("AndroidRepository.getLiveData", "Fetching asteroid objects from database for period: $startDate to $endDate.")
-            return Transformations.map(database.asteroidDao.getAsteroidsForPeriod(startDate, endDate)) {
-                it.asDomainModel()
+                list =
+                    database.asteroidDao.getAsteroidsForPeriod(startDate, endDate).asDomainModel()
             }
         }
+        
+        return list
     }
 
     //refresh database
     //this handles fetching data from API endpoint and parsing response into Asteroid Model objects
     suspend fun updateAsteroidsDatabase() {
-        withContext(kotlinx.coroutines.Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
 
             // attempt to fetch asteroids data from api endpoint,
             // parse response,
