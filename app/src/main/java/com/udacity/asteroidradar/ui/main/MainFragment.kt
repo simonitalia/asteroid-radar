@@ -93,13 +93,18 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
         })
     }
 
-    //TODO: Future enhancement - Implement options menu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_overflow_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.show_today_menu -> viewModel.getLiveData(AsteroidsRepository.AsteroidsFilter.SHOW_TODAY)
+            R.id.show_past_week_menu -> viewModel.getLiveData(AsteroidsRepository.AsteroidsFilter.SHOW_PAST_WEEK)
+            R.id.show_all_menu -> viewModel.getLiveData()
+        }
+
         return true
     }
 

@@ -42,7 +42,10 @@ class MainViewModel(
 
     // construct asteroids repository
     private val asteroidsRepository = AsteroidsRepository(database)
-    val asteroids = getLiveData()
+
+    private var _asteroids: LiveData<List<Asteroid>>? = null
+    val asteroids: LiveData<List<Asteroid>>?
+        get() = _asteroids
 
     // picture of the day url
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
@@ -57,6 +60,7 @@ class MainViewModel(
     init {
         updateAsteroids()
         getPictureOfDay()
+        getLiveData()
     }
 
     // triggers api fetch
@@ -67,8 +71,8 @@ class MainViewModel(
     }
 
     // gets asteroids from database as live data (default filter == SHOW_ALL)
-    private fun getLiveData(filter: AsteroidsRepository.AsteroidsFilter = AsteroidsRepository.AsteroidsFilter.SHOW_ALL): LiveData<List<Asteroid>> {
-        return asteroidsRepository.getLiveData(filter)
+    fun getLiveData(filter: AsteroidsRepository.AsteroidsFilter = AsteroidsRepository.AsteroidsFilter.SHOW_ALL) {
+        _asteroids = asteroidsRepository.getLiveData(filter)
     }
 
     // get picture of day from api endpoint
