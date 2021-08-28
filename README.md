@@ -10,17 +10,19 @@ This app project consists of 2 screens for displaying Near Earth Objects (aka As
 ### Notes for Assessor
 
 - Asteroid Objects / Data
-  - every time asteroid JSON objects are fetched and returned, the database is purged of all existing records and new asteroid objects are inserted
-  - therefore database always only holds 7 days worth of asteroid objects
+  - every time asteroid JSON objects are fetched and returned, the database is updated by inserting all new (unique) asteroid objects
+  - Database is updated via a API fetch request each time the app launches and in the Background via Work Manager 
 
 - Picture of the Day
   - picture of the day is not stored in the database (no requirement to do so)
   - a placeholder image is shown whilst fetching new image from api and i device is offline / has no internet connection
   - since asteroid objects on the main activity are loaded from the app’s local room db, the progress bar is hooked up to the picture of the day fetch request since that will most likely take longer to fetch the image from an api service than load the asteroid objects from the database (after the first launch of the app of course, which requires the first set of asteroid objects to be fetched)
 
-- Options Menu 
-  - has not been implemented for this submission since this is not a rubric requirement
-
+- Overflow Menu and Filtering logic: 
+  -  All filtering is handled by querying room database and returning filtered asteroid objects from the room database as follows:
+  -  Show Past Week: Shows all asteroids from current date MINUS 7 days ago inclusive
+  -  Show Today: Shows all asteroids for current date
+  -  Show All Saved: Shows all asteroids in the room database
 
 # Core Technologies
 
