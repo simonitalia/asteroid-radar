@@ -87,7 +87,7 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
         viewModel.selectedAsteroid.observe(viewLifecycleOwner, { selectedAsteroid ->
             selectedAsteroid?.let {
                 this.findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
-                viewModel.showDetailFragmentComplete() //reset value to null
+                viewModel.showDetailFragmentComplete()
             }
         })
     }
