@@ -11,7 +11,7 @@ This app project consists of 2 screens for displaying Near Earth Objects (aka As
 
 - Asteroid Objects / Data
   - every time asteroid JSON objects are fetched and returned, the database is updated by inserting all new (unique) asteroid objects
-  - Database is updated via a API fetch request each time the app launches and in the Background via Work Manager 
+  - room database is updated via API fetch request each time the app launches and in the Background via Work Manager 
 
 - Picture of the Day
   - picture of the day is not stored in the database (no requirement to do so)
