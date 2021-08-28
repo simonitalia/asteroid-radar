@@ -8,7 +8,9 @@ import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.models.Asteroid
 import com.udacity.asteroidradar.models.PictureOfDay
 import com.udacity.asteroidradar.repository.AsteroidsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Attach this [ViewModel] to [MainFragment].
@@ -43,13 +45,17 @@ class MainViewModel(
     // construct asteroids repository
     private val asteroidsRepository = AsteroidsRepository(database)
 
-    private var _asteroids: LiveData<List<Asteroid>>? = null
-    val asteroids: LiveData<List<Asteroid>>?
+//    private var _asteroids: LiveData<List<Asteroid>>? = null
+//    val asteroids
+//        get() = _asteroids
+
+    private val _asteroids = MutableLiveData<List<Asteroid>>()
+    val asteroids: LiveData<List<Asteroid>>
         get() = _asteroids
 
     // picture of the day url
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
-    val pictureOfDay: LiveData<PictureOfDay>?
+    val pictureOfDay: LiveData<PictureOfDay>
         get() = _pictureOfDay
 
     // asteroid tapped by user
@@ -72,7 +78,9 @@ class MainViewModel(
 
     // gets asteroids from database as live data (default filter == SHOW_ALL)
     fun getLiveData(filter: AsteroidsRepository.AsteroidsFilter = AsteroidsRepository.AsteroidsFilter.SHOW_ALL) {
-        _asteroids = asteroidsRepository.getLiveData(filter)
+        viewModelScope.launch {
+            _asteroids.value = asteroidsRepository.getLiveData(filter)
+        }
     }
 
     // get picture of day from api endpoint
