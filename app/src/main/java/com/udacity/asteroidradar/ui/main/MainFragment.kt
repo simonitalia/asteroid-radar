@@ -72,7 +72,7 @@ class MainFragment: Fragment(), AsteroidRecyclerViewAdapterListener { // impleme
 
         // observer MainViewModel live data changes
 
-        viewModel.asteroids?.observe(viewLifecycleOwner, { asteroids ->
+        viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
             asteroids?.let {
 
                 Log.i("MainFragment.OnViewCreated", "Asteroids successfully loaded from repo: ${it.count()}.")
