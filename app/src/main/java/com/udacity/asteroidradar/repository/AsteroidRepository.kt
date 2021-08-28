@@ -10,20 +10,56 @@ import com.udacity.asteroidradar.database.asDomainModel
 import com.udacity.asteroidradar.models.Asteroid
 import com.udacity.asteroidradar.models.AsteroidDatabaseArrayList
 import com.udacity.asteroidradar.models.asDatabaseModel
+import com.udacity.asteroidradar.utilities.DateUtilities
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 // uses dependency injection to get reference to database from ViewModel instance to negate need
 // to keep a reference to context and prevent leaks
+
+
 class AsteroidsRepository(private val database: AsteroidsDatabase) {
+
+    enum class AsteroidsFilter(val value: String) {
+        SHOW_ALL("all"), SHOW_PAST_WEEK("week"), SHOW_TODAY("today")
+    }
 
     // app wide accessible asteroids reference
     // transformation transforms one live data to another live data (database asteroids list object to asteroid (model) list object)
     // this transformation only runs if an activity or fragment is listening
-    fun getLiveData(): LiveData<List<Asteroid>> {
+    fun getLiveData(filter: AsteroidsFilter): LiveData<List<Asteroid>> {
+
+        // show all
+        if (filter == AsteroidsFilter.SHOW_ALL) {
             return Transformations.map(database.asteroidDao.getAllAsteroids()) {
                 it.asDomainModel()
             }
+
+        } else {
+
+            var startDate = ""
+            var endDate = ""
+
+            when (filter) {
+
+                // show last 7 days
+                AsteroidsFilter.SHOW_PAST_WEEK -> {
+                    startDate = DateUtilities.getPastSevenDaysFormattedDates().last()
+                    endDate = DateUtilities.getPastSevenDaysFormattedDates().first()
+                }
+
+                // show today
+                else -> {
+                    startDate = DateUtilities.getTodayFormattedDates().first()
+                    endDate = DateUtilities.getTodayFormattedDates().last()
+                }
+            }
+
+            Log.i("AndroidRepository.getLiveData", "Fetching asteroid objects from database for period: $startDate to $endDate.")
+            return Transformations.map(database.asteroidDao.getAsteroidsForPeriod(startDate, endDate)) {
+                it.asDomainModel()
+            }
+        }
     }
 
     //refresh database
@@ -42,9 +78,6 @@ class AsteroidsRepository(private val database: AsteroidsDatabase) {
                 /**
                  * Update NEO Database Table
                  */
-
-                // clear all existing records from database table
-                database.asteroidDao.clear()
 
                 //insert fetched
                 //transform Asteroids to DatabaseAsteroid and insert to database
