@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Asteroid Radar</string>
 
-    <string name="past_week_asteroids">View week asteroids</string>
+    <string name="past_week_asteroids">View past week asteroids</string>
     <string name="today_asteroids">View today asteroids</string>
-    <string name="all_asteroids">View saved asteroids</string>
+    <string name="all_asteroids">View all saved asteroids</string>
     <string name="close_approach_data_title">Close approach date</string>
     <string name="absolute_magnitude_title">Absolute magnitude</string>
     <string name="estimated_diameter_title">Estimated diameter</string>
