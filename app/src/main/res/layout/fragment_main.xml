@@ -31,7 +31,8 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:pictureOfDayImage="@{viewModel.pictureOfDay}"
-                app:srcCompat="@drawable/ic_broken_image" />
+                app:srcCompat="@drawable/ic_broken_image"
+                android:contentDescription="@string/this_is_nasa_s_picture_of_day_showing_nothing_yet" />
 
             <TextView
                 android:id="@+id/textView"

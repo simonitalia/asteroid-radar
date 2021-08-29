@@ -24,7 +24,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/asteroid_safe" />
+            tools:srcCompat="@drawable/asteroid_safe"
+            android:contentDescription="@string/potentially_hazardous_asteroid_image_description" />
 
         <ScrollView
             android:layout_width="0dp"
@@ -48,6 +49,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/close_approach_data_title"
+                        android:contentDescription="@string/close_approach_data_title"
                         android:textColor="@color/default_text_color" />
 
                     <TextView
@@ -56,6 +58,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="@{viewModel.selectedAsteroid.closeApproachDate}"
+                        android:contentDescription="@{viewModel.selectedAsteroid.closeApproachDate}"
                         android:textColor="@color/default_text_color"
                         tools:text="2020-02-01" />
                 </LinearLayout>
@@ -77,6 +80,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/absolute_magnitude_title"
+                            android:contentDescription="@string/absolute_magnitude_title"
                             android:textColor="@color/default_text_color" />
 
                         <TextView
@@ -94,7 +98,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        app:srcCompat="@drawable/ic_help_circle" />
+                        app:srcCompat="@drawable/ic_help_circle"
+                        android:contentDescription="@string/astronomical_unit_explanation" />
 
                 </LinearLayout>
 
@@ -103,6 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/estimated_diameter_title"
+                    android:contentDescription="@string/estimated_diameter_title"
                     android:textColor="@color/default_text_color" />
 
                 <TextView
@@ -135,6 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/distance_from_earth_title"
+                    android:contentDescription="@string/distance_from_earth_title"
                     android:textColor="@color/default_text_color" />
 
                 <TextView
