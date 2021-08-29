@@ -24,6 +24,12 @@ This app project consists of 2 screens for displaying Near Earth Objects (aka As
   -  Show Today: Shows all asteroids for current date
   -  Show All Saved: Shows all asteroids in the room database
 
+
+- Accessibility:
+  - Content Description for static Text Views (ie: Titles) have been set using attributes in the xml layout
+  - Content Description for dynamic Text and Image Views have been set in Binding Adapter to ensure talkback reflects state. 
+  - Note! Default Content Descriptions for dynamic ImageViews have also been set in the xml layout whilst content is downloaded / loaded 
+
 # Core Technologies
 
 - Room (Local App Database)
